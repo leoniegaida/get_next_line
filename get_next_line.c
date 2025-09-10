@@ -2,63 +2,73 @@
 
 char	*get_next_line(int fd)
 {
-	static char	*static_buff;
+	static char	*static_buf;
+	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 		return (NULL);
-	if (static_buff == NULL)
+	if (!static_buf)
 	{
-		static_buff = malloc(1);
-		if (!static_buff)
+		static_buf = malloc(1);
+		if (!static_buf)
 			return (NULL);
-		static_buff[0] = '\0';
+		static_buf[0] = '\0';
 	}
-	return (read_from_fd(fd, &static_buff));
+	static_buf = read_from_fd(fd, &static_buf);
+	line = extract_line(&static_buf);
+	static_buf = prepare_for_next_call(&static_buf);
+	return (line);
 }
 
-char	*read_from_fd(int fd, char **static_buff)
+char	*read_from_fd(int fd, char **static_buf)
 {
-	char	*sized_buff;
-	int		bytes_read;
+	char	*sized_buf;
 
-	while (!char_in_str('\n', *static_buff))
+	while (char_in_str('\n', *static_buf) < 0)
 	{
-		sized_buff = malloc(BUFFER_SIZE + 1);
-		if (!sized_buff)
-			return (null_and_free(sized_buff, static_buff));
-		bytes_read = read(fd, sized_buff, BUFFER_SIZE);
-		if (bytes_read == -1)
-			return (null_and_free(sized_buff, static_buff));
-		if (!bytes_read)
-			break ;
-		sized_buff[bytes_read] = '\0';
-		*static_buff = realloc_and_join(*static_buff, sized_buff);
-		if (!static_buff)
-			return (null_and_free(sized_buff, static_buff));
+		sized_buf = malloc(BUFFER_SIZE + 1);
+		if (!sized_buf)
+			return (NULL);
+		read(fd, sized_buf, BUFFER_SIZE);
+		*static_buf = realloc_and_join(*static_buf, sized_buf);
 	}
-	return (extract_line(static_buff));
+	return(*static_buf);
 }
 
-char	*extract_line(char **static_buff)
+char	*extract_line(char **static_buf)
 {
-	int		pos;
-	char	*temp;
-	char	*result;
+	char	*line;
+	int		line_len;
+	int		i;
 
-	if (*static_buff[0] == '\0')
-		return (null_and_free(NULL, static_buff));
-	pos = char_in_str('\n', *static_buff);
-	if (pos == -1)
+	line_len = char_in_str('\n', *static_buf);
+	line = malloc(line_len + 1);
+	if (!line)
+		return (NULL);
+	i = 0;
+	while (*static_buf[i] != '\n')
 	{
-		result = realloc_and_join(*static_buff, "");
-		null_and_free(NULL, static_buff);
-		return (result);
+		line[i] = *static_buf[i];
+		i++;
 	}
-	result = ft_substr(*static_buff, 0, pos);
-	temp = *static_buff;
-	*static_buff = ft_substr(*static_buff, pos + 1, ft_strlen(*static_buff) - 1);
-	free (temp);
-	if (result == NULL || *static_buff == NULL)
-		return (null_and_free(result, static_buff));
-	return (result);
+	line[i] = '\0';
+	return (line);
+}
+
+char	*prepare_for_next_call(char **static_buf)
+{
+	char	*new_static_buf;
+	int		pos_nl;
+	int		end;
+	int		remnant_len;
+
+	pos_nl = char_in_str('\n', *static_buf);
+	end = char_in_str('\0', *static_buf);
+	remnant_len = end - pos_nl;
+	new_static_buf = malloc(remnant_len + 1);
+	if (!new_static_buf)
+		return (NULL);
+	copy(&((*static_buf)[pos_nl + 1]), new_static_buf);
+	free(*static_buf);
+	return(new_static_buf);
 }

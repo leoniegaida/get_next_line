@@ -16,7 +16,7 @@ int	char_in_str(char c, char *str)
 {
 	int	i;
 
-	if (str == NULL)
+	if (!str)
 		return (-1);
 	i = 0;
 	while (str[i])
@@ -25,61 +25,38 @@ int	char_in_str(char c, char *str)
 			return (i);
 		i++;
 	}
+	if (c == '\0')
+		return(i);
 	return (-1);
 }
 
 char    *realloc_and_join(char *str1, char *str2)
 {
     char    *result;
-    int     i;
-    int     j;
+	int		str1_len;
+	int		str2_len;
 
-    result = malloc(ft_strlen(str1) + ft_strlen(str2) + 1);
+    str1_len = char_in_str('\0', str1) - 1;
+	str2_len = char_in_str('\0', str2) - 1;
+	result = malloc(str1_len + str2_len + 1);
     if (!result)
-        return (NULL);
-    i = 0;
-    while (str1[i])
-    {
-        result[i] = str1[i];
-        i++;
-    }
+		return (NULL);
+	copy(str1, result);
     free(str1);
-    j = 0;
-    while (str2[j])
-    {
-        result[i] = str2[j];
-        i++;
-        j++;
-    }
+	copy(str2, &result[str1_len]);
 	free (str2);
-    result[i] = '\0';
+    result[str1_len + str2_len] = '\0';
     return (result);
 }
 
-int	ft_strlen(char *str)
+void	copy(char *src, char *dest)
 {
 	int	i;
 
 	i = 0;
-	while(str[i])
-		i++;
-	return(i);
-}
-
-char	*ft_substr(char *str, int start, int end)
-{
-	char	*result;
-	int		i;
-
-	result = malloc(end - start + 2);
-	if (!result)
-		return (NULL);
-	i = 0;
-	while (i <= end - start)
+	while (src[i])
 	{
-		result[i] = str[start + i];
+		dest[i] = src[i];
 		i++;
 	}
-	result[i] = '\0';
-	return (result);
 }
