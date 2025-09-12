@@ -1,62 +1,97 @@
 #include "get_next_line.h"
 
-char	*null_and_free(char *p1, char **p2)
+char	*ft_strdup(char *str)
 {
-	if (p1 != NULL)
-		free(p1);
-	if (*p2 != NULL)
-	{
-		free(*p2);
-		*p2 = NULL;
-	}
-	return (NULL);
-}
+	int		str_len;
+	int		i;
+	char	*dest;
 
-int	char_in_str(char c, char *str)
-{
-	int	i;
-
-	if (!str)
-		return (-1);
+	str_len = ft_strchr(str, '\0');
+	dest = malloc(str_len + 1);
+	if (!dest)
+		return (NULL);
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == c)
-			return (i);
+		dest[i] = str[i];
 		i++;
 	}
-	if (c == '\0')
-		return(i);
-	return (-1);
+	dest[i] = '\0';
+	return (dest);
 }
 
-char    *realloc_and_join(char *str1, char *str2)
-{
-    char    *result;
-	int		str1_len;
-	int		str2_len;
-
-    str1_len = char_in_str('\0', str1) - 1;
-	str2_len = char_in_str('\0', str2) - 1;
-	result = malloc(str1_len + str2_len + 1);
-    if (!result)
-		return (NULL);
-	copy(str1, result);
-    free(str1);
-	copy(str2, &result[str1_len]);
-	free (str2);
-    result[str1_len + str2_len] = '\0';
-    return (result);
-}
-
-void	copy(char *src, char *dest)
+int	ft_strchr(char *str, char c)
 {
 	int	i;
 
 	i = 0;
-	while (src[i])
+	if (!str)
+		return (-1);
+	while (str[i])
+	{
+		if (str[i] == c)
+		{
+			return (i);
+		}
+		i++;
+	}
+	if (c == '\0')
+	{
+		return (i);
+	}
+	return (-1);
+}
+
+char	*ft_strjoin(char *str1, char *str2)
+{
+	int		str1_len;
+	int		str2_len;
+	char	*str;
+
+	str1_len = ft_strchr(str1, '\0');
+	str2_len = ft_strchr(str2, '\0');
+	str = malloc(str1_len + str2_len + 1);
+	if (!str)
+		return (NULL);
+	ft_memcpy(str, str1, str1_len);
+	ft_memcpy(&str[str1_len], str2, str2_len);
+	str[str1_len + str2_len] = '\0';
+	return (str);
+}
+
+char	*ft_memcpy(char *dest, char *src, int len)
+{
+	int	i;
+
+	i = 0;
+	while (i < len)
 	{
 		dest[i] = src[i];
 		i++;
 	}
+	return (dest);
+}
+
+char	*ft_substr(char *str, char start, char end)
+{
+	char	*substr;
+	int		i_start;
+	int		i_end;
+	int		substr_len;
+
+	if (start)
+		i_start = ft_strchr(str, start) + 1;
+	else
+		i_start = 0;
+	if (end)
+		i_end = ft_strchr(str, end) + 1;
+	else
+		i_end = ft_strchr(str, end);
+	substr_len = i_end - i_start;
+	substr = malloc(substr_len + 1);
+	if (!substr)
+		return (NULL);
+	ft_memcpy(substr, &str[i_start], substr_len);
+	substr[substr_len] = '\0';
+	return (substr);
 }

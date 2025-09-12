@@ -2,73 +2,70 @@
 
 char	*get_next_line(int fd)
 {
-	static char	*static_buf;
+	static char	*stash;
+	char		*buffer;
 	char		*line;
+	char		*remainder;
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 		return (NULL);
-	if (!static_buf)
-	{
-		static_buf = malloc(1);
-		if (!static_buf)
-			return (NULL);
-		static_buf[0] = '\0';
-	}
-	static_buf = read_from_fd(fd, &static_buf);
-	line = extract_line(&static_buf);
-	static_buf = prepare_for_next_call(&static_buf);
-	return (line);
-}
-
-char	*read_from_fd(int fd, char **static_buf)
-{
-	char	*sized_buf;
-
-	while (char_in_str('\n', *static_buf) < 0)
-	{
-		sized_buf = malloc(BUFFER_SIZE + 1);
-		if (!sized_buf)
-			return (NULL);
-		read(fd, sized_buf, BUFFER_SIZE);
-		*static_buf = realloc_and_join(*static_buf, sized_buf);
-	}
-	return(*static_buf);
-}
-
-char	*extract_line(char **static_buf)
-{
-	char	*line;
-	int		line_len;
-	int		i;
-
-	line_len = char_in_str('\n', *static_buf);
-	line = malloc(line_len + 1);
-	if (!line)
+	if (!stash)
+		stash = ft_strdup("");													// stash = malloc
+	buffer = malloc(BUFFER_SIZE + 1);
+	if (!buffer)
 		return (NULL);
-	i = 0;
-	while (*static_buf[i] != '\n')
+	read_from_fd(fd, &buffer, &stash);											// temp = malloc(stash+buffer), free (stash), stash = temp
+	free(buffer);
+	line = ft_strdup("");
+	remainder = ft_strdup("");
+	extract_line(stash, &line, &remainder);
+	free(stash);																// free(stash) DOUBLE FREE HERE AND
+	if (remainder[0])
+		stash = remainder;
+	else
+		free(remainder);
+	if (line[0])
+		return (line);
+	else
 	{
-		line[i] = *static_buf[i];
-		i++;
+		free(line);
+		return (NULL);
 	}
-	line[i] = '\0';
-	return (line);
 }
 
-char	*prepare_for_next_call(char **static_buf)
+void	read_from_fd(int fd, char **buffer, char **stash)
 {
-	char	*new_static_buf;
-	int		pos_nl;
-	int		end;
-	int		remnant_len;
+	int		bytes_read;
+	char	*temp;
 
-	pos_nl = char_in_str('\n', *static_buf);
-	end = char_in_str('\0', *static_buf);
-	remnant_len = end - pos_nl;
-	new_static_buf = malloc(remnant_len + 1);
-	if (!new_static_buf)
-		return (NULL);
-	copy(&((*static_buf)[pos_nl + 1]), new_static_buf);
-	free(*static_buf);
-	return(new_static_buf);
+	bytes_read = 1;
+	while (ft_strchr(*stash, '\n') < 0 && bytes_read > 0)
+	{
+		bytes_read = read(fd, *buffer, BUFFER_SIZE);
+		(*buffer)[bytes_read] = '\0';
+		temp = ft_strjoin(*stash, *buffer);
+		free (*stash);															// DOUBLE FREE AND HERE
+		*stash = temp;
+	}
+}
+
+void	extract_line(char *stash, char **line, char **remainder)
+{
+	char	*temp;
+
+	if (ft_strchr(stash, '\n') >= 0)
+	{
+		temp = ft_substr(stash, '\0', '\n');
+		free(*line);
+		*line = temp;
+		temp = ft_substr(stash, '\n', '\0');
+		free(*remainder);
+		*remainder = temp;
+	}
+	else
+	{
+		temp = ft_strdup(stash);
+		free(*line);
+		*line = temp;
+	}
 }
