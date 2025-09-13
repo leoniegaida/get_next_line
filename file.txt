@@ -1,5 +1,7 @@
-line1
-line2
-this is a longer line 3
+first line
+line 2
+3. line is looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong
 line 4
-last line
+
+line 6 comes after an empty line 5
+line 7 is last line but with nl at its end

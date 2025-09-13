@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lgaida <lgaida@student.42berlin.de>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/13 06:23:58 by lgaida            #+#    #+#             */
+/*   Updated: 2025/09/13 06:24:38 by lgaida           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
 char	*get_next_line(int fd)
@@ -37,7 +49,7 @@ void	read_from_fd(int fd, char **stash)
 	{
 		free(*stash);
 		return ;
-	};
+	}
 	bytes_read = 1;
 	while (ft_strchr(*stash, '\n') < 0)
 	{
@@ -46,7 +58,7 @@ void	read_from_fd(int fd, char **stash)
 			break ;
 		buffer[bytes_read] = '\0';
 		temp = ft_strjoin(*stash, buffer);
-		free (*stash);															// DOUBLE FREE AND HERE
+		free (*stash);
 		*stash = temp;
 	}
 	free(buffer);
