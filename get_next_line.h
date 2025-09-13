@@ -13,8 +13,8 @@
 char	*get_next_line(int fd);
 
 // parts of main function
-void	read_from_fd(int fd, char **buffer, char **stash);
-void	extract_line(char *stash, char **line, char **remainder);
+void	read_from_fd(int fd, char **stash);
+void	extract_line(char **stash, char **line);
 
 // helper functions (utils)
 char	*ft_strdup(char *str);
