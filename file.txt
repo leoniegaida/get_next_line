@@ -4,4 +4,4 @@ line 2
 line 4
 
 line 6 comes after an empty line 5
-line 7 is last line but with nl at its end
+line 7 is last line without nl at its end
