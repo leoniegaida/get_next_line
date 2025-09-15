@@ -18,6 +18,8 @@ char	*ft_strdup(char *str)
 	int		i;
 	char	*dest;
 
+	if (!str)
+		return (NULL);
 	str_len = ft_strchr(str, '\0');
 	dest = malloc(str_len + 1);
 	if (!dest)
@@ -38,7 +40,7 @@ int	ft_strchr(char *str, char c)
 
 	i = 0;
 	if (!str)
-		return (-1);
+		return (-2);
 	while (str[i])
 	{
 		if (str[i] == c)

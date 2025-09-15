@@ -22,20 +22,15 @@ char	*get_next_line(int fd)
 	if (!stash)
 		stash = ft_strdup("");
 	read_from_fd(fd, &stash);
-	if (!stash[0])
-	{
-		free(stash);
-		return (NULL);
-	}
-	line = ft_strdup("");
 	extract_line(&stash, &line);
-	if (line[0])
-		return (line);
-	else
+	if (!line || !line[0])
 	{
 		free(stash);
+		free(line);
 		return (NULL);
 	}
+	else
+		return (line);
 }
 
 void	read_from_fd(int fd, char **stash)
@@ -46,12 +41,9 @@ void	read_from_fd(int fd, char **stash)
 
 	buffer = malloc(BUFFER_SIZE + 1);
 	if (!buffer)
-	{
-		free(*stash);
 		return ;
-	}
 	bytes_read = 1;
-	while (ft_strchr(*stash, '\n') < 0)
+	while (ft_strchr(*stash, '\n') == -1)
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
 		if (bytes_read < 1)
@@ -70,20 +62,15 @@ void	extract_line(char **stash, char **line)
 
 	if (ft_strchr(*stash, '\n') >= 0)
 	{
-		temp = ft_substr(*stash, '\0', '\n');
-		free(*line);
-		*line = temp;
+		*line = ft_substr(*stash, 0, '\n');
 		temp = ft_substr(*stash, '\n', '\0');
 		free(*stash);
 		*stash = temp;
 	}
 	else
 	{
-		temp = ft_strdup(*stash);
-		free(*line);
-		*line = temp;
-		temp = ft_strdup("");
+		*line = ft_strdup(*stash);
 		free(*stash);
-		*stash = temp;
+		*stash = ft_strdup("");
 	}
 }
