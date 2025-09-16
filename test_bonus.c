@@ -1,12 +1,12 @@
 /******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test.c                                             :+:      :+:    :+:   */
+/*   test_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgaida <lgaida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 14:12:21 by lgaida            #+#    #+#             */
-/*   Updated: 2025/09/16 13:26:43 by lgaida           ###   ########.fr       */
+/*   Updated: 2025/09/16 13:22:29 by lgaida           ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -15,12 +15,11 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <fcntl.h>
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 void *__real_malloc(size_t size);
 void __real_free(void *ptr);
 
-#define FILE_TO_READ "file.txt"
 #define STATE_FILE "malloc_fail_state.txt"
 #define OUTPUT_FILE "output.txt"
 
@@ -103,19 +102,66 @@ static void update_state() {
 int	main(void)
 {
 	FILE    *log;
-    int		fd;
+	int		fd1;
+	int 	fd2;
+	int		fd3;
     int		lines;
 	char	*line;
 
     log = fopen(OUTPUT_FILE, "w");
-	fd = open(FILE_TO_READ, O_RDONLY);
-    lines = 1;
-	while ((line = get_next_line(fd)))
+
+	lines = 1;
+	line = "init";
+		
+	fd1 = open("file1.txt", O_RDONLY);
+	fd2 = open("file2.txt", O_RDONLY);
+	fd3 = open("file3.txt", O_RDONLY);
+
+	int	fd1_done = 0;
+	int	fd2_done = 0;
+	int	fd3_done = 0;
+
+	while (!fd1_done || !fd2_done || !fd3_done)
 	{
-		fprintf(log, "%d -> %s\n", lines++, line);
-		free(line);
+		if (!fd1_done)
+		{
+			line = get_next_line(fd1);
+			if (line)
+			{
+				fprintf(log, "%d -> %s\n", lines++, line);
+				free(line);
+			}
+			else
+				fd1_done = 1;
+		}
+		if (!fd2_done)
+		{
+			line = get_next_line(fd2);
+			if (line)
+			{
+				fprintf(log, "%d -> %s\n", lines++, line);
+				free(line);
+			}
+			else
+				fd2_done = 1;
+		}
+		if (!fd3_done)
+		{
+			line = get_next_line(fd3);
+			if (line)
+			{
+				fprintf(log, "%d -> %s\n", lines++, line);
+				free(line);
+			}
+			else
+				fd3_done = 1;
+		}
 	}
-	close(fd);
+
+	close(fd1);
+	close(fd2);
+	close(fd3);
+
     fclose(log);
 	return (0);
 }

@@ -1,12 +1,12 @@
 /******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgaida <lgaida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 06:23:58 by lgaida            #+#    #+#             */
-/*   Updated: 2025/09/16 12:55:20 by lgaida           ###   ########.fr       */
+/*   Updated: 2025/09/16 13:09:37 by lgaida           ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -14,20 +14,20 @@
 
 char	*get_next_line(int fd)
 {
-	static char	*stash;
+	static char	*stash[1024];
 	char		*line;
 	int			panic_button;
 
 	panic_button = 0;
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 		return (NULL);
-	if (!stash)
-		stash = ft_strdup("", &panic_button);
-	read_from_fd(fd, &stash, &panic_button);
-	extract_line(&stash, &line, &panic_button);
+	if (!stash[fd])
+		stash[fd] = ft_strdup("", &panic_button);
+	read_from_fd(fd, &(stash[fd]), &panic_button);
+	extract_line(&(stash[fd]), &line, &panic_button);
 	if (panic_button == 1 || !line || !line[0])
 	{
-		free(stash);
+		free(stash[fd]);
 		free(line);
 		return (NULL);
 	}
