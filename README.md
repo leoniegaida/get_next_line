@@ -28,7 +28,7 @@ gcc -Wall -Wextra -Werror -g test.c get_next_line.c get_next_line_utils.c -Wl,--
 
 don't change anything while iterating, or test won't work properly.
 
-if you test, change somehting, want to test again: delete STATE_FILE and OUTPUT_FILE before next test
+if you test, change something, want to test again: delete STATE_FILE and OUTPUT_FILE before next test.
 
 ## Thoughts on future implementations:
 - add global error handling with errno variable
