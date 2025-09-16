@@ -26,7 +26,8 @@ gcc -Wall -Wextra -Werror -g test.c get_next_line.c get_next_line_utils.c -Wl,--
 1. compile
 2. manually run ./a.out to iterate through all malloc calls (wrapper sets one after one =NULL)
 
-don't change anything while iterating, or test won't work properly
+don't change anything while iterating, or test won't work properly.
+
 if you test, change somehting, want to test again: delete STATE_FILE and OUTPUT_FILE before next test
 
 ## Thoughts on future implementations:
