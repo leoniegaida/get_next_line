@@ -6,7 +6,7 @@
 /*   By: lgaida <lgaida@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 06:23:58 by lgaida            #+#    #+#             */
-/*   Updated: 2025/09/16 12:55:20 by lgaida           ###   ########.fr       */
+/*   Updated: 2025/10/21 21:16:01 by lgaida           ###   ########.fr       */
 /*                                                                            */
 /******************************************************************************/
 
@@ -28,6 +28,7 @@ char	*get_next_line(int fd)
 	if (panic_button == 1 || !line || !line[0])
 	{
 		free(stash);
+		stash = NULL;
 		free(line);
 		return (NULL);
 	}
